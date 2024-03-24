@@ -232,7 +232,8 @@ const matWorldUniform = {type: 'v3', value: camera.matrixWorld};
 const envmapMaterial = new THREE.ShaderMaterial({
   uniforms: {
     lightDirection: lightDirectionUniform,
-    matrixWorld: {type: "m4", value: camera.matrixWorldInverse}
+    matrixWorld: {type: "m4", value: camera.matrixWorldInverse},
+    skybox: {type: "t", value: skyboxTexture}
   }
 });
 

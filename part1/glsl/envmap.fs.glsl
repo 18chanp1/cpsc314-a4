@@ -11,5 +11,6 @@ void main( void ) {
 
   // Q1c : Calculate the vector that can be used to sample from the cubemap
   // TODO:
-  gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+  vec4 tcolor = textureCube(skybox, vcsNormal);
+  gl_FragColor = tcolor;
 }
