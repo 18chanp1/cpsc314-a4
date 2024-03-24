@@ -153,7 +153,17 @@ const lightPositionUniform = { type: "v3", value: shadowCam.position};
 const shayDTextureUniform = {type: 't', value: shayDColorTexture};
 
 // Q1b TODO: load the skybox textures
-const skyboxCubemap = null;
+const skyboxLoader = new THREE.CubeTextureLoader();
+const skyboxTexture = skyboxLoader.load([
+    "images/cubemap/cube1.png",
+    "images/cubemap/cube2.png",
+    "images/cubemap/cube3.png",
+    "images/cubemap/cube4.png",
+    "images/cubemap/cube5.png",
+    "images/cubemap/cube6.png",
+]);
+
+scene.background = skyboxTexture;
 
 
 // Materials
