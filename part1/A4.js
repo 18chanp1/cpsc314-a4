@@ -85,8 +85,18 @@ const helmetMaterial = new THREE.MeshStandardMaterial({
 // Q1e TODO: This ambient light is added for temporary visualization of the helmet. 
 // Delete this after added the IBL.
 // You need to load the HDR background (./images/rathasus_2k.exr) with the EXRLoader
-let ambientLight = new THREE.AmbientLight(0x404040, 10);
-IBLScene.add( ambientLight );
+
+new THREE.EXRLoader().load('./images/rathaus_2k.exr', function (texture) {
+  let pmremedTexture = pmremGenerator.fromEquirectangular(texture)
+  helmetMaterial.envMap = pmremedTexture.texture;
+  helmetMaterial.needsUpdate = true;
+  IBLScene.background = texture;
+});
+
+IBLScene
+
+// let ambientLight = new THREE.AmbientLight(0x404040, 10);
+// IBLScene.add( ambientLight );
 
 const damagedHelmetFilePath = './gltf/DamagedHelmet/DamagedHelmet.gltf';
 let damagedHelmetObject;
@@ -172,7 +182,7 @@ const postMaterial = new THREE.ShaderMaterial({
     lightProjMatrix: {type: "m4", value: shadowCam.projectionMatrix},
     lightViewMatrix: {type: "m4", value: shadowCam.matrixWorldInverse},
     tDiffuse: {type: "t", value: null},
-    tDepth: { type: "t", value: null }
+    tDepth: { type: "t", value: renderTarget.depthTexture },
   }
 });
 
@@ -406,9 +416,11 @@ function update() {
   {
     // Q1d Visualise the shadow map
     // TODO: First pass to get the depth value
-
+    renderer.setRenderTarget( renderTarget );
+    renderer.render( shadowScene, shadowCam);
     // TODO: Second Pass, visualise shadow map to quad
-    
+    renderer.setRenderTarget( null );
+    renderer.render( postScene, postCam);
   }
   else if (sceneHandler == 3) 
   {
