@@ -90,10 +90,15 @@ new THREE.EXRLoader().load('./images/rathaus_2k.exr', function (texture) {
   let pmremedTexture = pmremGenerator.fromEquirectangular(texture)
   helmetMaterial.envMap = pmremedTexture.texture;
   helmetMaterial.needsUpdate = true;
-  IBLScene.background = texture;
+  IBLScene.background = pmremedTexture.texture;
+  IBLScene.environment = pmremedTexture.texture;
+  
+  IBLCamera.position.set(0.0, 1.5, 4.0);
+  IBLCamera.lookAt(IBLScene.position);
+
 });
 
-IBLScene
+
 
 // let ambientLight = new THREE.AmbientLight(0x404040, 10);
 // IBLScene.add( ambientLight );
