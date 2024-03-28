@@ -30,9 +30,7 @@ float inShadow() {
 	vec4 projCoords = lightSpaceCoords / lightSpaceCoords.w;
 	vec4 uvCoord = 0.5 * lightSpaceCoords + 0.5;
 	float zbufdepth = texture2D(shadowMap, uvCoord.xy).x;
-	// return 1.0;
-	return zbufdepth;
-	return zbufdepth < lightSpaceCoords.z ? 1.0 : 0.0;
+	return zbufdepth < uvCoord.z ? 1.0 : 0.0;
 }
 
 // TODO: Returns a value in [0, 1], 1 indicating all sample points are occluded
@@ -61,7 +59,7 @@ void main() {
 
 	//SHADOW
 	// TODO:
-	float shadow = inShadow();
+	float shadow = 1.0 - inShadow();
 
 	//TOTAL
 	light_DFF *= texture(colorMap, texCoord).xyz;
