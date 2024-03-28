@@ -35,7 +35,28 @@ float inShadow() {
 
 // TODO: Returns a value in [0, 1], 1 indicating all sample points are occluded
 float calculateShadow() {
-	return 0.0;
+	float occludedSamples = 0.0;
+	float pixelOffset = (1.0 / textureSize) + 0.0001;
+	vec4 projCoords = lightSpaceCoords / lightSpaceCoords.w;
+	vec4 uvCoord = 0.5 * lightSpaceCoords + 0.5;
+
+	//left pixel
+	if(texture2D(shadowMap, uvCoord.xy + vec2(-pixelOffset, 0.0)).x < uvCoord.z)
+		occludedSamples += 1.0;
+
+	//right pixel
+	if(texture2D(shadowMap, uvCoord.xy + vec2(pixelOffset, 0.0)).x < uvCoord.z)
+		occludedSamples += 1.0;
+	
+	//top pixel
+	if(texture2D(shadowMap, uvCoord.xy + vec2(0.0, pixelOffset)).x < uvCoord.z)
+		occludedSamples += 1.0;
+	
+	//bottom pixel
+	if(texture2D(shadowMap, uvCoord.xy + vec2(0.0, -pixelOffset)).x < uvCoord.z)
+		occludedSamples += 1.0;
+
+	return occludedSamples / 4.0;
 }
 
 void main() {
@@ -59,7 +80,7 @@ void main() {
 
 	//SHADOW
 	// TODO:
-	float shadow = 1.0 - inShadow();
+	float shadow = 1.0 - calculateShadow();
 
 	//TOTAL
 	light_DFF *= texture(colorMap, texCoord).xyz;
