@@ -26,8 +26,13 @@ uniform float textureSize;
 //Q1d do the shadow mapping
 //Q1d iii do PCF
 // Returns 1 if point is occluded (saved depth value is smaller than fragment's depth value)
-float inShadow(vec3 fragCoord, vec2 offset) {
-	return 0.0;
+float inShadow() {
+	vec4 projCoords = lightSpaceCoords / lightSpaceCoords.w;
+	vec4 uvCoord = 0.5 * lightSpaceCoords + 0.5;
+	float zbufdepth = texture2D(shadowMap, uvCoord.xy).x;
+	// return 1.0;
+	return zbufdepth;
+	return zbufdepth < lightSpaceCoords.z ? 1.0 : 0.0;
 }
 
 // TODO: Returns a value in [0, 1], 1 indicating all sample points are occluded
@@ -56,11 +61,11 @@ void main() {
 
 	//SHADOW
 	// TODO:
-	float shadow = 1.0;
+	float shadow = inShadow();
 
 	//TOTAL
 	light_DFF *= texture(colorMap, texCoord).xyz;
 	vec3 TOTAL = light_AMB + shadow * (light_DFF + light_SPC);
-
+	
 	gl_FragColor = vec4(TOTAL, 1.0);
 }

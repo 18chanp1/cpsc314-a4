@@ -210,8 +210,8 @@ const floorMaterial = new THREE.ShaderMaterial({
     
     colorMap: {type: "t", value: floorColorTexture},
     normalMap: { type: "t", value: floorNormalTexture },
-    shadowMap: {type: "t", value: null},
-    textureSize: {type: "float", value: null},
+    shadowMap: {type: "t", value: renderTarget.depthTexture},
+    textureSize: {type: "float", value: renderTarget.depthTexture.mapping},
   }
 });
 
@@ -431,6 +431,8 @@ function update() {
   {
     // Q1d Do the multipass shadowing
     // TODO: First pass
+    renderer.setRenderTarget( renderTarget );
+    renderer.render( shadowScene, shadowCam);
     
     // TODO: True second pass, change below
     renderer.setRenderTarget( null );
