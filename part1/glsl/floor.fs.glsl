@@ -21,7 +21,7 @@ uniform sampler2D normalMap;
 
 // Added ShadowMap
 uniform sampler2D shadowMap;
-uniform float textureSize;
+uniform vec2 textureSize;
 
 //Q1d do the shadow mapping
 //Q1d iii do PCF
@@ -36,27 +36,32 @@ float inShadow() {
 // TODO: Returns a value in [0, 1], 1 indicating all sample points are occluded
 float calculateShadow() {
 	float occludedSamples = 0.0;
-	float pixelOffset = (1.0 / textureSize) + 0.0001;
+	vec2 pixelOffset = (1.0 / textureSize) + 0.0001;
 	vec4 projCoords = lightSpaceCoords / lightSpaceCoords.w;
 	vec4 uvCoord = 0.5 * lightSpaceCoords + 0.5;
+	
+
+	//center pixel
+	if(texture2D(shadowMap, uvCoord.xy).x < uvCoord.z)
+		occludedSamples += 1.0;
 
 	//left pixel
-	if(texture2D(shadowMap, uvCoord.xy + vec2(-pixelOffset, 0.0)).x < uvCoord.z)
+	if(texture2D(shadowMap, uvCoord.xy + vec2(-pixelOffset.x, 0.0)).x < uvCoord.z)
 		occludedSamples += 1.0;
 
 	//right pixel
-	if(texture2D(shadowMap, uvCoord.xy + vec2(pixelOffset, 0.0)).x < uvCoord.z)
+	if(texture2D(shadowMap, uvCoord.xy + vec2(pixelOffset.x, 0.0)).x < uvCoord.z)
 		occludedSamples += 1.0;
 	
 	//top pixel
-	if(texture2D(shadowMap, uvCoord.xy + vec2(0.0, pixelOffset)).x < uvCoord.z)
+	if(texture2D(shadowMap, uvCoord.xy + vec2(0.0, pixelOffset.y)).x < uvCoord.z)
 		occludedSamples += 1.0;
 	
 	//bottom pixel
-	if(texture2D(shadowMap, uvCoord.xy + vec2(0.0, -pixelOffset)).x < uvCoord.z)
+	if(texture2D(shadowMap, uvCoord.xy + vec2(0.0, -pixelOffset.y)).x < uvCoord.z)
 		occludedSamples += 1.0;
 
-	return occludedSamples / 4.0;
+	return occludedSamples / 5.0;
 }
 
 void main() {

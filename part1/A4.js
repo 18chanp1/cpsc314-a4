@@ -192,6 +192,9 @@ const postMaterial = new THREE.ShaderMaterial({
 });
 
 // Updated to use lighting effects in shader files
+let actualScreenSize = new THREE.Vector2();
+renderer.getSize(actualScreenSize);
+console.log(actualScreenSize)
 const floorMaterial = new THREE.ShaderMaterial({ 
   uniforms: {
     lightProjMatrix: {type: "m4", value: shadowCam.projectionMatrix},
@@ -211,7 +214,7 @@ const floorMaterial = new THREE.ShaderMaterial({
     colorMap: {type: "t", value: floorColorTexture},
     normalMap: { type: "t", value: floorNormalTexture },
     shadowMap: {type: "t", value: renderTarget.depthTexture},
-    textureSize: {type: "float", value: renderTarget.depthTexture.mapping},
+    textureSize: {type: "v2", value: actualScreenSize}
   }
 });
 
@@ -399,6 +402,9 @@ function updateMaterials() {
   shadowMaterial.needsUpdate = true;
   floorMaterial.needsUpdate = true;
   postMaterial.needsUpdate = true;
+
+  floorMaterial.uniforms.textureSize.value = new THREE.Vector2();
+  renderer.getSize(floorMaterial.uniforms.textureSize.value);
 }
 
 // Setup update callback
@@ -412,6 +418,7 @@ function update() {
   renderer.getSize(screenSize);
   renderer.setRenderTarget( null );
   renderer.clear();
+
   
   if (sceneHandler == 1) {
     // Debug, see the scene from the light's perspective
